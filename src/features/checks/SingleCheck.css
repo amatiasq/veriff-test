@@ -1,0 +1,56 @@
+.SingleCheck {
+  padding: 12px 16px;
+  /* display: flex;
+  flex-direction: column; */
+  --border: 1px solid rgba(17, 97, 92, 1);
+
+  &:hover {
+    background: rgba(245, 245, 245, 1);
+  }
+
+  &:focus-within {
+    background: linear-gradient(0deg, #d4faed, #d4faed),
+      linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.25),
+        rgba(255, 255, 255, 0.25)
+      );
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.15000000596046448px;
+    text-align: left;
+  }
+
+  .SingleCheck__status {
+    display: inline-flex;
+    border: var(--border);
+    border-radius: 4px;
+  }
+
+  input[type='radio'] {
+    appearance: none;
+  }
+
+  label {
+    padding: 4px 16px;
+
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.15000000596046448px;
+    text-align: left;
+
+    &:has(:checked) {
+      background: rgba(17, 97, 92, 1);
+      color: white;
+    }
+
+    & + label {
+      border-left: var(--border);
+    }
+  }
+}
