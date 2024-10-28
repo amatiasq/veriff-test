@@ -4,6 +4,10 @@
   flex-direction: column; */
   --border: 1px solid rgba(17, 97, 92, 1);
 
+  &:has(:disabled) {
+    opacity: 0.5;
+  }
+
   &:hover {
     background: rgba(245, 245, 245, 1);
   }

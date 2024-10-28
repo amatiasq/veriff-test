@@ -2,7 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import useFetch from 'react-fetch-hook';
 import './CheckList.css';
 import { CheckModel, type CheckId } from './CheckModel';
-import { SingleCheck } from './SingleCheck';
+import { SingleCheck, type SingleCheckStatus } from './SingleCheck';
+import { simulateTabPress } from './focus';
 
 function useCheckList() {
   const { isLoading, error, data } = useFetch<CheckModel[]>('/api/checks');
@@ -41,6 +42,13 @@ export function CheckList() {
     [sorted, setResponses]
   );
 
+  const onButtonKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      simulateTabPress('back');
+    }
+  }, []);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -56,24 +64,44 @@ export function CheckList() {
           <SingleCheck
             key={check.id}
             check={check}
-            isActive={arePreviousSelected(index)}
+            status={getStepStatus(index)}
             value={responses[check.id]}
             onChange={onChange}
           />
         ))}
       </ul>
 
-      <button type="submit">Submit</button>
+      <button
+        type="submit"
+        disabled={!isButtonEnabled()}
+        onKeyDown={onButtonKeyDown}
+      >
+        Submit
+      </button>
     </form>
   );
 
-  function arePreviousSelected(index: number) {
+  function getStepStatus(index: number): SingleCheckStatus {
     for (let i = 0; i < index; i++) {
-      if (!(sorted[i].id in responses)) {
-        return false;
+      if (responses[sorted[i].id] !== true) {
+        return 'disabled';
       }
     }
 
-    return true;
+    if (sorted[index].id in responses) {
+      return 'completed';
+    }
+
+    return 'active';
+  }
+
+  function isButtonEnabled() {
+    const isNoSelected = sorted.some((check) => responses[check.id] === false);
+    if (isNoSelected) return true;
+
+    const areAllTrue = sorted.every((check) => responses[check.id] === true);
+    if (areAllTrue) return true;
+
+    return false;
   }
 }
