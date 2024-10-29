@@ -1,7 +1,9 @@
 import { Hono } from 'hono';
 import type { CheckId, CheckModel } from './features/checks/CheckModel';
 
-export const api = new Hono().get('/checks', (c) => c.json(getChecks()));
+export const api = new Hono()
+  .get('/checks', (c) => c.json(getChecks()))
+  .post('/checks', async (c) => console.log(await c.req.json()));
 
 function getChecks(): CheckModel[] {
   return [

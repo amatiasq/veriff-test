@@ -1,31 +1,19 @@
-import { useCallback, useMemo, useState } from 'react';
-import useFetch from 'react-fetch-hook';
+import { useCallback, useState } from 'react';
 import './CheckList.css';
-import { CheckModel, type CheckId } from './CheckModel';
+import { type CheckId } from './CheckModel';
 import { SingleCheck, type SingleCheckStatus } from './SingleCheck';
 import { simulateTabPress } from './focus';
+import { useCheckList } from './useCheckList';
 
-function useCheckList() {
-  const { isLoading, error, data } = useFetch<CheckModel[]>('/api/checks');
+type Responses = Record<CheckId, boolean>;
 
-  const sorted = useMemo(() => {
-    if (!data) {
-      return [];
-    }
-
-    return [...data].sort((a, b) => a.priority - b.priority);
-  }, [data]);
-
-  return { isLoading, error, sorted };
-}
-
-export function CheckList() {
-  const [responses, setResponses] = useState<Record<CheckId, boolean>>({});
+export function CheckList({ afterSubmit }: { afterSubmit: () => unknown }) {
+  const [responses, setResponses] = useState<Responses>({});
   const { isLoading, error, sorted } = useCheckList();
 
   const onChange = useCallback(
     (id: CheckId, status: boolean) => {
-      const newResponses = { [id]: status } as typeof responses;
+      const newResponses = { [id]: status } as Responses;
       const index = sorted.findIndex((check) => check.id === id);
 
       setResponses((prev) => {
@@ -49,6 +37,15 @@ export function CheckList() {
     }
   }, []);
 
+  const submit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      await submitResponses(responses);
+      afterSubmit();
+    },
+    [responses, afterSubmit]
+  );
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -58,7 +55,7 @@ export function CheckList() {
   }
 
   return (
-    <form className="CheckList">
+    <form className="CheckList" onSubmit={submit}>
       <ul>
         {sorted.map((check, index) => (
           <SingleCheck
@@ -104,4 +101,17 @@ export function CheckList() {
 
     return false;
   }
+}
+
+function submitResponses(responses: Responses) {
+  const responseArray = Object.entries(responses).map(([id, value]) => ({
+    checkId: id,
+    result: value ? 'yes' : 'no',
+  }));
+
+  return fetch('/api/checks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ results: responseArray }),
+  });
 }

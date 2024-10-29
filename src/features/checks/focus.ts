@@ -34,12 +34,12 @@ export function simulateTabPress(direction: 'back' | 'forward' = 'forward') {
 }
 
 function findTabbables(target: HTMLElement) {
-  const form = target.closest('form.CheckList');
+  const form =
+    target.closest('form.CheckList') ??
+    document.querySelector('form.CheckList');
 
   if (!form) {
-    throw new Error(
-      'simulateTabPress() called with an element outside of a CheckList form'
-    );
+    throw new Error('No form found for simulateTabPress()');
   }
 
   const tabbables = [

@@ -16,5 +16,16 @@
   ul {
     list-style: none;
     padding: 0;
+    margin: 0;
+  }
+
+  button[type=submit] {
+    margin: 64px 16px 12px;
+    color: white;
+    background: rgba(17, 97, 92, 1);
+
+    &[disabled] {
+      opacity: 0.5;
+    }
   }
 }

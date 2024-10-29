@@ -63,6 +63,7 @@ export function SingleCheck({
           <input
             type="radio"
             name={check.id}
+            required={status !== 'disabled'}
             disabled={status === 'disabled'}
             autoFocus={status === 'active'}
             checked={value === true}
@@ -75,6 +76,7 @@ export function SingleCheck({
           <input
             type="radio"
             name={check.id}
+            required={status !== 'disabled'}
             disabled={status === 'disabled'}
             checked={value === false}
             onChange={setFalse}
