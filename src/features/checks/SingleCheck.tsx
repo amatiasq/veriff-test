@@ -62,6 +62,7 @@ export function SingleCheck({
         <label>
           <input
             type="radio"
+            value="yes"
             name={check.id}
             required={status !== 'disabled'}
             disabled={status === 'disabled'}
@@ -75,6 +76,7 @@ export function SingleCheck({
         <label>
           <input
             type="radio"
+            value="no"
             name={check.id}
             required={status !== 'disabled'}
             disabled={status === 'disabled'}

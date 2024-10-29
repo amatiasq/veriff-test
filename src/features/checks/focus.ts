@@ -26,6 +26,8 @@ export function simulateTabPress(direction: 'back' | 'forward' = 'forward') {
   const nextIndex = findNextIndex(currentIndex, direction, tabbables.length);
   const next = tabbables[nextIndex];
 
+  if (!next) return;
+
   if (next.tagName === 'BUTTON') {
     next.focus();
   } else {
@@ -38,9 +40,7 @@ function findTabbables(target: HTMLElement) {
     target.closest('form.CheckList') ??
     document.querySelector('form.CheckList');
 
-  if (!form) {
-    throw new Error('No form found for simulateTabPress()');
-  }
+  if (!form) return [];
 
   const tabbables = [
     ...form.querySelectorAll<HTMLElement>(
